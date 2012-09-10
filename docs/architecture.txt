@@ -1,0 +1,21 @@
+Data Sources
+	* Bus Tracker
+	* Weather
+	* Stock Quote
+
+Generating Web Interface
+	* Upload WSDL description
+	* Add persistence?
+		* Set-up schedule now?
+			* Choose API methods, choose date/time ranges/intervals, settings
+	* Generates server instance
+	* Generates client library instance
+
+Server Instance
+	* Daemon to take snapshots, stored in MySQL
+	* Review snapshots
+	* Pass along API calls, unless they should be using historical data
+
+Client Library
+	* Provides methods to interface with the API
+	* Additional methods to "set time" (i.e. use historical data or use current data)

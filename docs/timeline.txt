@@ -1,0 +1,26 @@
+== Project Timeline ==
+
+Step 1. Infrastructure Design and implementation
+(a) Analysis and Requirements solicitation
+(b) System design and implementation
+(c) Documentation
+(d) Validation and testing
+Step 2. Prog. Projects Design and Implementation
+(a) Create project descriptions
+(b) Prototype project implementation
+
+9/7 - Present
+9/14 - Design finalized
+9/21 - Implementation begun
+9/28 - Unit Tests built
+10/5 - Alpha version, create sample projects
+10/12 - Revised Unit Tests
+10/19 - Beta version, revise sample projects
+10/26 - Revised Unit Tests
+11/2 - Final version, revise sample projects
+11/9 - Revised Unit Tests, Documentation finalized
+11/16 -
+11/23 -
+11/30 - 
+12/7 -
+12/14 -
