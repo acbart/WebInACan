@@ -8,7 +8,7 @@ Generating Web Interface
 	* Add persistence?
 		* Set-up schedule now?
 			* Choose API methods, choose date/time ranges/intervals, settings
-	* Generates server instance
+	* Generates server instance locally, initiates
 	* Generates client library instance
 
 Server Instance
