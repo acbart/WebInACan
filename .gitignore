@@ -1,3 +1,5 @@
 ./BindingGenerator/refs/
 ./BindingGenerator/refs/*
+BindingGenerator/refs/*
+./BindingGenerator/refs/
 *.pyc
