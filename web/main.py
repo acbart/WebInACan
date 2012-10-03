@@ -43,4 +43,4 @@ def show_entries():
     
 if __name__ == '__main__':
     init_db()
-    app.run(host='mickey.vt.cs.edu:8000')
+    app.run(host='mickey.cs.vt.edu', port=8000)
