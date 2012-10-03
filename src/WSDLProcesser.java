@@ -16,7 +16,7 @@ public class WSDLProcesser {
 	private String outputDirectory;
 	
 	public void setWsdlPath(String path) {
-		this.wsdlPath = Server.class.getResource(path).toString();
+		this.wsdlPath = WebInACan.class.getResource(path).toString();
 	}
 	
 	private static class ExitTrappedException extends SecurityException { }
