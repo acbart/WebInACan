@@ -1,0 +1,86 @@
+Data Sources
+	* Bus Tracker
+	* Weather
+	* Stock Quote
+
+Generating Web Interface
+	* Upload WSDL description
+    * Axis converts WSDL to Java
+	* Add persistence?
+		* Set-up schedule now?
+			* Choose API methods, choose date/time ranges/intervals, settings
+	* Generates server instance locally, initiates
+	* Generates client library instance
+
+Server Instance
+	* Daemon to take snapshots, stored in MySQL
+	* Review snapshots
+	* Pass along API calls, unless they should be using historical data
+
+Client Library
+	* Provides methods to interface with the API
+	* Additional methods to "set time" (i.e. use historical data or use current data)
+    
+    
+    
+Client Package
+    Axis Classes
+    _WrapperClient implements portType
+        private boolean direct;
+        private datetime time;
+        public get/setTime();
+        private PORTTYPEIMPLEMENATION directImplemenation;
+        for each call to function in PortType
+            if direct
+                directImplemntation.call
+            else:
+                forward to server
+
+Database Tables
+    Snapshots
+        
+    Foreach function in PortType
+        make a table using parameters and return value
+Server Package
+    Axis classes
+    -WrapperServer implements porttype
+        private DatabaseConnection
+        private caching 
+        for each call to function in PortType
+            if cached
+                return cached value
+            else:
+                directImplementation.call
+                if caching:
+                    store in cache
+                    
+                    
+Storing Java stuff in a database:
+    Here are some alternatives that you can use:
+        The Java Object Serialization APIs as described in the links in @Nishant's answer.
+        JSON serialization as described in @fatnjazzy's answer.
+        An XML serialization library like XStream.
+        An ORM mapping.
+        
+        
+Conversation topics: 
+    Do we want to use an RDBMS? NoSQL or Memcached seems like a better option for this.
+    What Educational Theory are we relying on? How do we evalute the pedagogical impact?
+        - Intrinsic Motivation related to using this app
+    What are example projects that could take advantage of this?
+        - Applications that use a real-time data feed that changes on a regular basis and doesn't provide historical data
+            - This application provides cached versions of the data for testing purposes
+    But can it be used for real-world purposes? Students shouldn't be able to rely on constantly cached data, right?
+        - Stock Quotes
+            - Stock tracker
+        - Bus Tracker
+            - Bus tracking system
+            - 
+        - 
+    AppScale - freeware google app engine
+        Might be an option for hosting the server
+    
+    
+    Tony Alleveto - what do you market yourself as? (digital education)
+    
+    Susan Roger - JFlap, Duke University

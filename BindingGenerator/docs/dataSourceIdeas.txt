@@ -1,0 +1,16 @@
+Reddit
+Google News
+Earthquakes
+Bus Tracker
+Facebook
+Twitter
+Google Maps
+Foursquare
+Weather Data
+Sports stats
+IMDB
+Netflix
+Google Flu Tracker
+Youtube
+Wikipedia Articles
+Steam Data API
