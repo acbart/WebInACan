@@ -32,7 +32,10 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     g.db.close()
-    
+
+@app.route('/wsdls')
+def show_wsdls():
+    return "NOT FOR MORTAL EYES"
     
 @app.route('/')
 def show_entries():
