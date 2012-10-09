@@ -1,4 +1,4 @@
-package weather;
+package <Package>;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,39 +13,35 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
-import javax.xml.rpc.encoding.DeserializerFactory;
 import javax.xml.rpc.encoding.SerializerFactory;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.xml.sax.SAXException;
 
 /**
  * Singleton class for accessing web data.
  * @author acbart
  *
  */
-public class Weatherer {
+public class <WSDL_Main> {
 
 	/**
 	 * Singleton instance of the class.
 	 */
-	private static Weatherer instance = null;
+	private static <WSDL_Main> instance = null;
 
 	/**
 	 * Indicates that the web service should not be called, even
 	 * if there is no entry in the local cache.
 	 */
-	private boolean offline = false;
+	private boolean offline = true;
 
 	/**
 	 * Indicates that the local cache should be skipped in favor of
@@ -57,7 +53,7 @@ public class Weatherer {
 	 * The PortType is our connection to the web service, and also holds
 	 * a good bit of metainformation about using the auto-generated bindings. 
 	 */
-	private NdfdXMLBindingStub portBinding;
+	private <WSDL_Stub> portBinding;
 
 	/**
 	 * Maps from a Java class to an XML serializer factory, so given a java
@@ -76,7 +72,7 @@ public class Weatherer {
 	/**
 	 * Local constructor, should never be called except by getInstance().
 	 */
-	protected Weatherer() {
+	protected <WSDL_Main>() {
 		// Exists only to defeat instantiation
 		// Won't work if in the same package or if this class is subclassed
 	}
@@ -87,9 +83,9 @@ public class Weatherer {
 	 * @throws ServiceException
 	 * @throws RemoteException
 	 */
-	public static Weatherer getInstance() throws ServiceException, RemoteException {
+	public static <WSDL_Main> getInstance() throws ServiceException, RemoteException {
 		if (instance == null) {
-			instance = new Weatherer();
+			instance = new <WSDL_Main>();
 			instance.initConnectionParameters();
 		}
 		return instance;
@@ -102,7 +98,7 @@ public class Weatherer {
 	 */
 	public void initConnectionParameters() throws ServiceException, RemoteException { 
 		// Pattern: (new Locator()).getPortType()
-		this.portBinding = (NdfdXMLBindingStub)(new NdfdXMLLocator()).getndfdXMLPort();
+		this.portBinding = (<WSDL_Stub>)(new <WSDL_Locator>()).get<WSDL_Port>();
 		// Collect information about serializer
 		Call dummyCall = portBinding.createCall();
 		this.serializerTypeMapping = dummyCall.getTypeMapping();
@@ -126,17 +122,17 @@ public class Weatherer {
 	public class Callback {
 		/**
 		 * Callback that is called when a call to the web service (or cache) is
-		 * finished successfully. "data" will need to be cast to something more
-		 * useful.
+		 * finished successfully. "data" is almost certainly some XML data, it
+		 * seems.
 		 * @param data
 		 */
-		public void dataReceived(Object data) {}
+		public void dataReceived(String data) {}
 		/**
 		 * Callback that is called when a call to the web service (or cache)
 		 * fails. There could be several reasons why.
 		 * @param e
 		 */
-		public void errorRecieved(Exception e) {
+		public void errorRecieved(IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -144,19 +140,12 @@ public class Weatherer {
 	/**
 	 * 
 	 * @param args
-	 * @throws SAXException 
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws SAXException {
+	public static void main(String[] args) {
 		try {
 			// TODO: command line snapshot generation
-			Weatherer wt = null;
-			try {
-				wt = getInstance();
-			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Weatherer wt = new Weatherer();
 
 			java.util.Calendar c1 = java.util.Calendar.getInstance();
 			java.util.Calendar c2 = java.util.Calendar.getInstance();
@@ -179,9 +168,6 @@ public class Weatherer {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -194,12 +180,13 @@ public class Weatherer {
 	 * @return
 	 * @throws IOException
 	 */
-	public String keyifyArguments(int operationIndex, Object[] arguments) throws IOException {
+	public String keyifyArguments(String method, Object[] arguments) throws IOException {
 		// Get everything we need to know about the methods parameters
-		OperationDesc methodDescription = NdfdXMLBindingStub._operations[operationIndex];
-		// Create the output string
+		OperationDesc methodDescription = <WSDL_Stub>._operations[2];
+		// Get everything we need to know to perform mapping
+		// Create the output array
 		StringWriter key = new StringWriter();
-		key.write(methodDescription.getName()+",");
+		key.write(method+",");
 		// Iterate over parameters to convert them to their XML representation
 		int parameterCount = methodDescription.getParameters().size();
 		for (int i = 0; i < parameterCount; i += 1) {
@@ -221,37 +208,6 @@ public class Weatherer {
 		key.flush();
 		return key.toString();
 	}
-	
-	private String valuifyReturn(int operationIndex, Object returnValue) throws IOException {
-		// Create the output string
-		StringWriter value = new StringWriter();
-		// Get everything we need to know about the method's return
-		OperationDesc methodDescription = NdfdXMLBindingStub._operations[operationIndex];
-		Class returnJavaType = methodDescription.getReturnClass();
-		QName returnQName = methodDescription.getReturnQName();
-		SerializerFactory returnSerializerFactory = serializerTypeMapping.getSerializer(returnJavaType, returnQName);
-		org.apache.axis.encoding.Serializer returnSerializer = (org.apache.axis.encoding.Serializer) returnSerializerFactory.getSerializerAs(serializerEncodingStyle); 
-		SerializationContext serializerForValue= new SerializationContext(value);
-		// Serialize the argument into xml and add it to the key
-		returnSerializer.serialize(returnQName, null, returnValue, serializerForValue);
-		value.flush();
-		return value.toString();
-	}
-	
-	private Object devaluifyReturn(int operationIndex, String serializedValue) throws Exception {
-		// Get everything we need to know about the method's return
-		OperationDesc methodDescription = NdfdXMLBindingStub._operations[operationIndex];
-		Class returnJavaType = methodDescription.getReturnClass();
-		QName returnQName = methodDescription.getReturnType();
-		DeserializerFactory returnDeserializerFactory = serializerTypeMapping.getDeserializer(returnJavaType, returnQName);
-		org.apache.axis.encoding.Deserializer returnDeserializer = (org.apache.axis.encoding.Deserializer) returnDeserializerFactory.getDeserializerAs(serializerEncodingStyle);
-		MessageContext ct = new MessageContext(null);
-		DeserializationContext deserializerForValue= new DeserializationContext(null, ct, serializedValue);
-		deserializerForValue.parse();
-		System.out.println("Value: "+deserializerForValue.getCurElement());
-		// Serialize the argument into xml and add it to the key
-		return returnDeserializer.getValue(serializedValue);
-	}
 
 	/**
 	 * <Match signature for original function>
@@ -259,33 +215,17 @@ public class Weatherer {
 	 * This call will be performed synchronously - that is, execution will continue
 	 * while it is being made. Implement the callback parameter to have something
 	 * happen when the call is finished (either by success or failure).
-	 * @param listLatLon
-	 * @param product
-	 * @param startTime
-	 * @param endTime
-	 * @param unit
-	 * @param weatherParameters
 	 * @param cb
 	 * @throws RemoteException
 	 */
-	public void NDFDgenLatLonList(final java.lang.String listLatLon, 
-			final weather.ProductType product, 
-			final java.util.Calendar startTime, 
-			final java.util.Calendar endTime, 
-			final weather.UnitType unit, 
-			final weather.WeatherParametersType weatherParameters,
+	public void <WSDL_aFunction>(<*WSDL_aFunctionsParameters>,
 			final Callback cb) throws RemoteException {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
-					String result = NDFDgenLatLonList(listLatLon, 
-							product, 
-							startTime, 
-							endTime, 
-							unit, 
-							weatherParameters);
+					String result = <WSDL_aFunction>(<*WSDL_aFunctionParameters>);
 					cb.dataReceived(result);
-				} catch (Exception e) {
+				} catch (IOException e) {
 					cb.errorRecieved(e);
 				}
 			}
@@ -298,37 +238,22 @@ public class Weatherer {
 	 * 
 	 * This function will be performed synchronously - that is, execution will pause until
 	 * the call is finished, whether it ends in success or failure.
-	 * 
-	 * @param listLatLon
-	 * @param product
-	 * @param startTime
-	 * @param endTime
-	 * @param unit
-	 * @param weatherParameters
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException
 	 */
-	public String NDFDgenLatLonList(java.lang.String listLatLon, 
-			weather.ProductType product, 
-			java.util.Calendar startTime, 
-			java.util.Calendar endTime, 
-			weather.UnitType unit, 
-			weather.WeatherParametersType weatherParameters) throws Exception {
+	public String <WSDL_aFunction>(<*WSDL_aFunctionsParameters>) throws IOException {
 		// Create a key corresponding to this method invocation
-		Object[] args = { listLatLon, product, startTime, endTime, unit, weatherParameters };
-		String key = keyifyArguments(2, args);
+		Object[] args = { <*WSDL_aFunctionsParameters>};
+		String key = keyifyArguments("getQuote", args);
 
 		// if we're using the store and the key is present, retrieve it's value
 		if (!this.direct && isInStore(key)) {
 			return restore(key);
 		// else if we're not offline, go retreive the value from the web service
 		} else if (!this.offline) {
-			String value = this.portBinding.NDFDgenLatLonList(listLatLon, product,
-					startTime, endTime, unit, weatherParameters);
+			String value = this.portBinding.<WSDL_aFunction>(<*WSDL_aFunctionsParameters>);
 			key = getCurrentTime() + "," + key;
-			System.out.println(valuifyReturn(2, value));
-			System.out.println(devaluifyReturn(2, valuifyReturn(2, value)));
-			store(key, valuifyReturn(2, value));
+			store(key, value);
 			return value;
 		// otherwise we're hosed!
 		} else {

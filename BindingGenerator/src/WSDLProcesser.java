@@ -50,6 +50,7 @@ public class WSDLProcesser {
 		createJavaBindings();
 		
 		String serviceName = getServiceName().toString();
+		System.out.println(serviceName);
 		/**
 		 * _.java
 		 * _Locator.java
@@ -73,35 +74,8 @@ public class WSDLProcesser {
 		this.outputDirectory = outputDirectory;
 	}
 	
-	public String createClientClasses(String location) {
-		/*
-		 * direct : boolean
-		 * 
-		 * time : datetime
-		 * 
-		 * setTime(datetime)
-		 * 
-		 * For each call, create a corresponding function
-		 * that function passes all parameters, etc. to the server
-		 * or passes it directly to the web service
-		 */
-		String client = ""; 
-		return "";
-	}
-	
-	public String createServerClasses(String location) {
-		/*
-		 * cache : mapping of times,calls to data
-		 * 
-		 * for each call, create a corresponding function that 
-		 * checks the cache and returns the existing data or
-		 * makes a new call, stores it in the cache, and returns it
-		 * 
-		 * creates a list of snapshots
-		 * 
-		 * starts the snapshot daemon
-		 */
-		return "";
+	public void createBindingWrapper(String location) {
+		
 	}
 	
 	public void createJavaBindings() {
