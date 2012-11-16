@@ -35,7 +35,6 @@ def show_service_bindings(service):
     
 @app.route('/suggest/wsdl')
 def suggest_wsdl():
-    
     return url_for("/suggest/wsdl/bindings")
     
 @app.route('/suggest/freeform')
