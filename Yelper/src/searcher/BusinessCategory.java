@@ -7,17 +7,31 @@ public class BusinessCategory {
 	private String title;
 	private String alias;
 	private List<BusinessCategory> subcategories;
-	public String getTitle() {
-		return title;
+	private BusinessCategory(BusinessCategory bc) {
+		this.title = bc.title;
+		this.alias = bc.alias;
+		if (bc.subcategories.isEmpty()) {
+			this.subcategories = null;
+		} else {
+			this.subcategories = bc.getSubcategories();
+		}
 	}
-	public void setTitle(String title) {
+	public BusinessCategory(String title, String alias) {
 		this.title = title;
+		this.alias = alias;
+	}
+	public BusinessCategory(ArrayList<String> a) {
+		this.title = (String) a.get(0);
+		this.alias = (String) a.get(1);
+	}
+	public BusinessCategory(String string) {
+		// TODO Auto-generated constructor stub
+	}
+	public void addCategory(BusinessCategory ct) {
+		subcategories.add(ct);
 	}
 	public String getAlias() {
 		return alias;
-	}
-	public void setAlias(String alias) {
-		this.alias = alias;
 	}
 
 	public List<BusinessCategory> getSubcategories() {
@@ -28,26 +42,11 @@ public class BusinessCategory {
 		return bcSubcategoriesCopy;
 	}
 	
-	private BusinessCategory(BusinessCategory bc) {
-		this.title = bc.title;
-		this.alias = bc.alias;
-		if (bc.subcategories.isEmpty()) {
-			this.subcategories = null;
-		} else {
-			this.subcategories = bc.getSubcategories();
-		}
+	public String getTitle() {
+		return title;
 	}
-	public void addCategory(BusinessCategory ct) {
-		subcategories.add(ct);
-	}
-	
 	public boolean hasSubcategories() {
 		return subcategories.isEmpty();
-	}
-	
-	public BusinessCategory(String title, String alias) {
-		this.title = title;
-		this.alias = alias;
 	}
 
 }

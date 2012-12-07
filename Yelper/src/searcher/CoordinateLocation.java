@@ -1,5 +1,10 @@
 package searcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import regular.Util;
+
 public class CoordinateLocation implements Location {
 	/* 
 	TODO: Getters/setters  
@@ -148,5 +153,22 @@ public class CoordinateLocation implements Location {
 	
 	public void removeAltitudeAccuracy() {
 		this.hasAltitudeAccuracy= false;
+	}
+
+	@Override
+	public Map<String, String> getFilter() {
+		HashMap<String, String> filters = new HashMap<String,String>();
+		String locationString = Util.formatDecimals(latitude, 6)+","+Util.formatDecimals(longitude,6);
+		if (this.hasAccuracy) {
+			locationString+= "," + Util.formatDecimals(this.accuracy,6);
+		}
+		if (this.hasAltitude) {
+			locationString+= "," + Util.formatDecimals(this.altitude,6);
+		}
+		if (this.hasAltitudeAccuracy) {
+			locationString+= "," + Util.formatDecimals(this.altitudeAccuracy,6);
+		}
+		filters.put("ll", locationString);
+		return filters;
 	}
 }

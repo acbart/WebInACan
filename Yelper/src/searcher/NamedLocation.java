@@ -1,5 +1,10 @@
 package searcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import regular.Util;
+
 public class NamedLocation implements Location {
 	private String address;
 	private double latitudeHint;
@@ -48,5 +53,17 @@ public class NamedLocation implements Location {
 	
 	public boolean hasHint() {
 		return hinting;
+	}
+
+	@Override
+	public Map<String, String> getFilter() {
+		HashMap<String, String> filter = new HashMap<String,String>();
+		filter.put("location", this.address);
+		if (this.hinting) {
+			filter.put("cll", Util.formatDecimals(this.latitudeHint, 6)
+					+","
+					+Util.formatDecimals(this.longitudeHint, 6));
+		}
+		return filter;
 	}
 }
