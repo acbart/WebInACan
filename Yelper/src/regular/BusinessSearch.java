@@ -10,6 +10,7 @@ import structured.StructuredBusinessSearchListener;
 import searcher.AbstractBusinessSearch;
 import searcher.BusinessCategory;
 import searcher.BusinessQuery;
+import searcher.ClientStore;
 import searcher.NamedLocation;
 
 
@@ -25,6 +26,10 @@ public class BusinessSearch implements AbstractBusinessSearch {
 
 	public BusinessSearch() {
 		this.structuredBusinessSearch = new StructuredBusinessSearch();
+	}
+	
+	public ClientStore getClientStore() {
+		return this.structuredBusinessSearch.getClientStore();
 	}
 
 	private StructuredBusinessSearch structuredBusinessSearch;
@@ -81,7 +86,16 @@ public class BusinessSearch implements AbstractBusinessSearch {
 	}
 
 	public static void main(String[] args) {
-		final BusinessSearch bs = new BusinessSearch("em86viPSqwmfF2PFfNsPEQ",
+		final BusinessSearch bs = new BusinessSearch(true);
+		bs.getBusinessData("bad input", new BusinessDataListener() {
+
+			@Override
+			public void onSuccess(Business business) {
+				System.out.println(business);
+			}
+			
+		});
+		/*final BusinessSearch bs = new BusinessSearch("em86viPSqwmfF2PFfNsPEQ",
 				"K7Dq24NKDMNNk-sz_-JMlAvDmSU",
 				"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
 				"ggqII8lp1foy0ttolsYrTIUAm7c");
@@ -124,7 +138,7 @@ public class BusinessSearch implements AbstractBusinessSearch {
 				});
 			}
 			
-		});
+		});*/
 	}
 
 }

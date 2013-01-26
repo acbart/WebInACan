@@ -13,6 +13,7 @@ import regular.JsonConverter;
 import searcher.AbstractBusinessSearch;
 import searcher.BusinessCategory;
 import searcher.BusinessQuery;
+import searcher.ClientStore;
 
 
 public class StructuredBusinessSearch implements AbstractBusinessSearch {
@@ -28,7 +29,6 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 	public StructuredBusinessSearch() {
 		this.jsonBusinessSearch = new JsonBusinessSearch();
 	}
-	
 	
 
 	private JsonBusinessSearch jsonBusinessSearch;
@@ -108,6 +108,10 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 			}
 
 		});
+	}
+
+	public ClientStore getClientStore() {
+		return this.jsonBusinessSearch.getClientStore();
 	}
 
 }

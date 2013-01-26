@@ -33,6 +33,7 @@ vt_users = filter(lambda user : user['user_id'] in vt_reviewers,
                   users)
 
 f = open('dataset_filtered.json', 'w')
+f2 = open('business_ids.txt', 'w')
 print "There are %d businesses" % (len(businesses),)
 print "There are %d reviews" % (len(vt_reviews),)
 print "There are %d users" % (len(vt_users),)
@@ -42,4 +43,7 @@ for line in vt_reviews:
     f.write(str(line)+"\n")
 for line in vt_users:
     f.write(str(line)+"\n")
+for business in vt_businesses:
+    f2.write(str(business)+"\n")
 f.close()
+f2.close()

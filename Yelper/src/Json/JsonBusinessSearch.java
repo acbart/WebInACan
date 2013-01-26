@@ -1,15 +1,23 @@
 package json;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import regular.Business;
 import regular.JsonConverter;
 import searcher.AbstractBusinessSearch;
 import searcher.BusinessAPI;
 import searcher.BusinessCategory;
 import searcher.BusinessQuery;
+import searcher.ClientStore;
 
 import org.json.simple.parser.ParseException;
 import org.scribe.builder.ServiceBuilder;
@@ -29,6 +37,8 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	protected OAuthService service;
 	protected Token accessToken;
 	protected List<BusinessCategory> rootCategory;
+	
+	private ClientStore clientStore;
 
 	/**
 	 * Creates a new Business Search that cannot connect to the internet.
@@ -40,6 +50,7 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 		this.service = null;
 		this.accessToken = null;
 		this.rootCategory = new ArrayList<BusinessCategory>();
+		this.clientStore = new ClientStore();
 	}
 
 	/**
@@ -158,15 +169,30 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 														"K7Dq24NKDMNNk-sz_-JMlAvDmSU",
 														"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
 														"ggqII8lp1foy0ttolsYrTIUAm7c");
-		jbs.getBusinessData("Te72-fjbquQFCfPBgJ4ldQ", new JsonBusinessDataListener() {
-
-			@Override
-			public void onSuccess(String business) {
-				System.out.println("SUCCESS"+business);
-			}
-			
-		});
 		
+		try {
+			final PrintWriter os = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\acbart\\Projects\\WebInACan\\Yelper\\src\\updated.json", true)));
+			InputStreamReader is = new InputStreamReader(JsonBusinessSearch.class.getResourceAsStream("../business_ids_2.txt"));
+			BufferedReader clientData = new BufferedReader(is);
+			String line;
+			while ((line = clientData.readLine()) != null) {
+				jbs.getBusinessData(line.trim(), new JsonBusinessDataListener() {
+
+					@Override
+					public void onSuccess(String business) {
+						System.out.println(business);
+						os.println(business);
+					}
+					
+				});
+			}
+			clientData.close();
+			os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
 		BusinessQuery bq = new BusinessQuery("blacksburg va");
 		jbs.searchBusinesses(bq, new JsonBusinessSearchListener() {
 
@@ -175,6 +201,11 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 				System.out.println("AWESOME"+searchResponse);
 			}
 			
-		});
+		});*/
 	}
+
+	public ClientStore getClientStore() {
+		return clientStore;
+	}
+
 }
