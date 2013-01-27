@@ -1,5 +1,3 @@
-import org.jdom2.Element;
-
 
 public class WeatherException extends Exception {
 	

@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class WeatherService {
 		
-		private final static String SERVICE_URL = "http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php";
+		private final static String SERVICE_URL = "http://forecast.weather.gov/MapClick.php";
 	
 		public static void main(String[] args) {
 			WeatherService jw = new WeatherService();
@@ -21,19 +21,19 @@ public class WeatherService {
 			this.local = false;
 		}
 		
-		public WeatherForecast getWeather(Coordinate location) throws WeatherException {
+		public Forecast getWeather(Coordinate location) throws WeatherException {
 			String parameters = Requests.makeParameter("lat", location.getLatitude()) + "&" +
 								Requests.makeParameter("lon", location.getLongitude()) + "&" +
-								Requests.makeParameter("format", "24+hourly");
+								Requests.makeParameter("FcstType", "json");
 					
-			String xmlData = "";
+			String jsonResponse = "";
 			try {
-				xmlData = Requests.get(SERVICE_URL, parameters);
+				jsonResponse = Requests.get(SERVICE_URL, parameters);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return new WeatherForecast(xmlData);
+			return new Forecast(jsonResponse);
 		}
 		
 		/**
