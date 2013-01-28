@@ -8,7 +8,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class JsonConverter {
+class JsonConverter {
 	private static ContainerFactory CONTAINER_FACTORY = new ContainerFactory(){
 	    public List creatArrayContainer() {
 		      return new ArrayList();
@@ -21,7 +21,11 @@ public class JsonConverter {
 		  };
 	
 
-	public static HashMap<String, Object> convertToHashMap(String input) throws ParseException {
+	static HashMap<String, Object> convertToHashMap(String input) throws ParseException {
 		return (HashMap<String, Object>) (new JSONParser()).parse(input, CONTAINER_FACTORY);
+	}
+	
+	static ArrayList<Object> convertToArrayList(String input) throws ParseException {
+		return (ArrayList<Object>) (new JSONParser()).parse(input, CONTAINER_FACTORY);
 	}
 }
