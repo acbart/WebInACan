@@ -3,37 +3,59 @@ package regular;
 import java.util.List;
 import java.util.Map;
 
+import exceptions.BusinessSearchException;
+
+import main.AbstractBusinessSearch;
+import main.BusinessCategory;
+import main.BusinessQuery;
+import main.ClientStore;
+import main.NamedLocation;
+
 import structured.StructuredBusinessDataListener;
 import structured.StructuredBusinessSearch;
 import structured.StructuredBusinessSearchListener;
 
-import searcher.AbstractBusinessSearch;
-import searcher.BusinessCategory;
-import searcher.BusinessQuery;
-import searcher.ClientStore;
-import searcher.NamedLocation;
 
 
 public class BusinessSearch implements AbstractBusinessSearch {
 
-	public BusinessSearch(String consumerKey, String consumerSecret, String token, String tokenSecret) {
-		this.structuredBusinessSearch = new StructuredBusinessSearch(consumerKey, consumerSecret, token, tokenSecret);
-	}
+	private static BusinessSearch instance;
 
-	public BusinessSearch(boolean spoofing) {
-		this.structuredBusinessSearch = new StructuredBusinessSearch(spoofing);
-	}
-
-	public BusinessSearch() {
-		this.structuredBusinessSearch = new StructuredBusinessSearch();
+	/**
+	 * Retrieves the singleton instance of the JsonBusinessSearch.
+	 * 
+	 * @return
+	 */
+	public static BusinessSearch getInstance() {
+		if (instance == null) {
+			synchronized (BusinessSearch.class) {
+				if (instance == null) {
+					instance = new BusinessSearch();
+				}
+			}
+		}
+		return instance;
 	}
 	
-	public ClientStore getClientStore() {
-		return this.structuredBusinessSearch.getClientStore();
+	/** 
+	 * Protected Constructor guards against instantiation.
+	 */
+	protected BusinessSearch() {
+		structuredBusinessSearch = StructuredBusinessSearch.getInstance();
 	}
 
 	private StructuredBusinessSearch structuredBusinessSearch;
 
+	/**
+	 * Returns data about a business given its businessId (which is a sequence
+	 * of characters, symbols, and numbers, e.g. "I_7cQmHxx6LokP9yr7Fx-w").
+	 * 
+	 * @param businessId
+	 *            A string identifying the business.
+	 * @param listener
+	 *            a callback function that will consume the data (or error)
+	 *            about the business.
+	 */
 	public void getBusinessData(String businessId, final BusinessDataListener listener) {
 		this.structuredBusinessSearch.getBusinessData(businessId, new StructuredBusinessDataListener() {
 
@@ -43,7 +65,7 @@ public class BusinessSearch implements AbstractBusinessSearch {
 			}
 			
 			@Override
-			public void onFailure(Exception exception) {
+			public void onFailure(BusinessSearchException exception) {
 				listener.onFailure(exception);
 			}
 
@@ -51,6 +73,16 @@ public class BusinessSearch implements AbstractBusinessSearch {
 		});
 	}
 
+	/**
+	 * Queries the Yelp service for businesses that match the given
+	 * BusinessQuery. Returns the data (or error) through the listener object.
+	 * 
+	 * @param query
+	 *            A BusinessQuery object
+	 * @param listener
+	 *            A listener object that should contain methods for handling the
+	 *            data and, optionally, any errors.
+	 */
 	public void searchBusinesses(BusinessQuery query, final BusinessSearchListener listener) {
 		this.structuredBusinessSearch.searchBusinesses(query, new StructuredBusinessSearchListener() {
 
@@ -60,7 +92,7 @@ public class BusinessSearch implements AbstractBusinessSearch {
 			}
 			
 			@Override
-			public void onFailure(Exception exception) {
+			public void onFailure(BusinessSearchException exception) {
 				listener.onFailure(exception);
 			}
 
@@ -68,25 +100,39 @@ public class BusinessSearch implements AbstractBusinessSearch {
 		});
 	}
 
-	@Override
+	/**
+	 * Establishes a connection to the online Business Search service.
+	 * dataservice. This requires an internet connection.
+	 * 
+	 * Requires registration information from Yelp. To get your key go to
+	 * http://www.yelp.com/developers
+	 * 
+	 * @param consumerKey
+	 * @param consumerSecret
+	 * @param token
+	 * @param tokenSecret
+	 */
 	public void connect(String consumerKey, String consumerSecret,
 			String token, String tokenSecret) {
 		this.structuredBusinessSearch.connect(consumerKey, consumerSecret, token, tokenSecret);
 	}
 
-	@Override
-	public void setSpoofing(boolean spoofing) {
-		this.structuredBusinessSearch.setSpoofing(spoofing);
-	}
-
-	@Override
-	public List<BusinessCategory> getCategories() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Establishes that Business Search data should be retrieved locally. This
+	 * does not require an internet connection.
+	 * 
+	 * If data is being retrieved locally, you must be sure that your parameters
+	 * match locally stored data. Otherwise, you will get nothing in return.
+	 * 
+	 * @param local
+	 */
+	public void setLocal() {
+		this.structuredBusinessSearch.setLocal();
 	}
 
 	public static void main(String[] args) {
-		final BusinessSearch bs = new BusinessSearch(true);
+		final BusinessSearch bs = BusinessSearch.getInstance();
+		bs.setLocal();
 		bs.getBusinessData("bad input", new BusinessDataListener() {
 
 			@Override
@@ -95,50 +141,6 @@ public class BusinessSearch implements AbstractBusinessSearch {
 			}
 			
 		});
-		/*final BusinessSearch bs = new BusinessSearch("em86viPSqwmfF2PFfNsPEQ",
-				"K7Dq24NKDMNNk-sz_-JMlAvDmSU",
-				"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
-				"ggqII8lp1foy0ttolsYrTIUAm7c");
-		bs.getBusinessData("ritas-water-ice-blacksburg", new BusinessDataListener() {
-
-			@Override
-			public void onSuccess(Business business) {
-				BusinessQuery bq = new BusinessQuery(business.getLocation());
-				bs.searchBusinesses(bq, new BusinessSearchListener() {
-
-					@Override
-					public void onSuccess(SearchResponse searchResponse) {
-						System.out.println("SECOND: "+searchResponse);
-					}
-					
-				});
-			}
-			
-			@Override
-			public void onFailure(Exception exception) {
-				System.out.println("Exception:"+exception);
-			}
-
-		});
-		
-		BusinessQuery bq = new BusinessQuery(new NamedLocation("Blacksburg, VA"));
-		bs.searchBusinesses(bq, new BusinessSearchListener() {
-
-			@Override
-			public void onSuccess(SearchResponse searchResponse) {
-				System.out.println("FIRST: "+searchResponse);
-				BusinessQuery bq = new BusinessQuery(searchResponse.getSuggestedDisplayRegion().getCenter());
-				bs.searchBusinesses(bq, new BusinessSearchListener() {
-
-					@Override
-					public void onSuccess(SearchResponse searchResponse) {
-						System.out.println("Third: "+searchResponse);
-					}
-					
-				});
-			}
-			
-		});*/
 	}
 
 }

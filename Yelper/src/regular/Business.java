@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-import searcher.BusinessCategory;
-import searcher.DetailedLocation;
+import main.BusinessCategory;
+import main.DetailedLocation;
+
 
 /**
  * A Business object represents a Business in the real world. 
@@ -58,7 +59,7 @@ public class Business {
 		if (raw.get("categories") != null) {
 			Iterator<ArrayList<String>> i = ((ArrayList<ArrayList<String>>) raw.get("categories")).iterator();
 			while (i.hasNext()) {
-				this.categories.add(new BusinessCategory(i.next()));
+				this.categories.add(BusinessCategory.getFromAlias(i.next()));
 			}
 		}
 		

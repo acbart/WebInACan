@@ -25,4 +25,7 @@ public class JsonConverter {
 	public static HashMap<String, Object> convertToHashMap(String input) throws ParseException {
 		return (HashMap<String, Object>) (new JSONParser()).parse(input, CONTAINER_FACTORY);
 	}
+	public static ArrayList<Object> convertToArrayList(String input) throws ParseException {
+		return (ArrayList<Object>) (new JSONParser()).parse(input, CONTAINER_FACTORY);
+	}
 }

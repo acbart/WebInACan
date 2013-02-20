@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import searcher.BusinessCategory;
+import main.BusinessCategory;
+
 
 public class Util {
 	private String join(Object[] objects) {
@@ -22,6 +23,15 @@ public class Util {
 		for (String s: strings) {
 		    if (sb.length() > 0) sb.append(',');
 		    sb.append(s);
+		}
+		return sb.toString();
+	}
+	
+	public static String join(List objects) {
+		StringBuilder sb = new StringBuilder();
+		for (Object o : objects) {
+		    if (sb.length() > 0) sb.append(',');
+		    sb.append(o.toString());
 		}
 		return sb.toString();
 	}

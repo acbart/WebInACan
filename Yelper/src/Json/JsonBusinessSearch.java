@@ -1,209 +1,292 @@
 package json;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
-import regular.Business;
 import regular.JsonConverter;
-import searcher.AbstractBusinessSearch;
-import searcher.BusinessAPI;
-import searcher.BusinessCategory;
-import searcher.BusinessQuery;
-import searcher.ClientStore;
+
+import main.AbstractBusinessSearch;
+import main.BusinessAPI;
+import main.BusinessQuery;
+import main.ClientStore;
 
 import org.json.simple.parser.ParseException;
 import org.scribe.builder.ServiceBuilder;
+import org.scribe.exceptions.OAuthException;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import exceptions.YelpException;
+import exceptions.BusinessSearchException;
 
-
+/**
+ * The JsonBusinessSearch class is used to connect to the Yelp service and
+ * retrieve data JSON formatted data. All data is returned asynchronously - your
+ * program will continue to run while the data is being fetched, and the result
+ * will be sent to a callback function that you specify.<br>
+ * <br>
+ * 
+ * There will only be one instance of the StructuredBusinessSearch, because it
+ * follows the Singleton pattern. In order to use it, first get the instance of
+ * the class.
+ * 
+ * <pre>
+ * StructuredBusinessSearch sbs = StructuredBusinessSearch.getInstance();
+ * </pre>
+ * 
+ * Then you can either connect to the online service:
+ * 
+ * <pre>
+ * sbs.connect(&quot;key&quot;, &quot;secret&quot;, &quot;token&quot;, &quot;secrettoken&quot;);
+ * </pre>
+ * 
+ * or use the service offline:
+ * 
+ * <pre>
+ * sbs.setLocal();
+ * </pre>
+ * 
+ * @author acbart
+ * 
+ */
 public class JsonBusinessSearch implements AbstractBusinessSearch {
 
-	protected boolean connected;
-	protected boolean spoof;
+	protected boolean local;
 	protected OAuthService service;
 	protected Token accessToken;
-	protected List<BusinessCategory> rootCategory;
-	
 	private ClientStore clientStore;
 
+	private static JsonBusinessSearch instance;
+
 	/**
-	 * Creates a new Business Search that cannot connect to the internet.
-	 * Instead, all calls will be made to the local data set.
+	 * Retrieves the singleton instance of the JsonBusinessSearch.
+	 * 
+	 * @return
 	 */
-	public JsonBusinessSearch() {
-		this.connected = false;
-		this.spoof = false;
+	public static JsonBusinessSearch getInstance() {
+		if (instance == null) {
+			synchronized (JsonBusinessSearch.class) {
+				if (instance == null) {
+					instance = new JsonBusinessSearch();
+				}
+			}
+		}
+		return instance;
+	}
+
+	/**
+	 * A protected constructor to defeat instantation of this singleton.
+	 */
+	protected JsonBusinessSearch() {
+		setLocal();
 		this.service = null;
 		this.accessToken = null;
-		this.rootCategory = new ArrayList<BusinessCategory>();
 		this.clientStore = new ClientStore();
 	}
 
 	/**
-	 * Creates a new Business Search that cannot connect to the internet.
-	 * Instead, all calls will be made to the local data set.
+	 * Establishes a connection to the online Business Search service.
+	 * dataservice. This does not require an internet connection.
 	 * 
-	 * @param spoofing Whether calls that would normally go to the internet should
-	 * return random data from the local data set.
-	 */
-	public JsonBusinessSearch(boolean spoofing) {
-		this();
-		this.spoof = spoofing;
-	}
-
-	/**
-	 * Creates a new Business Search that can connect to the internet. Requires
-	 * registration information from Yelp.
+	 * Requires registration information from Yelp. To get your key go to
+	 * http://www.yelp.com/developers
+	 * 
 	 * @param consumerKey
 	 * @param consumerSecret
 	 * @param token
 	 * @param tokenSecret
 	 */
-	public JsonBusinessSearch(String consumerKey, String consumerSecret, String token, String tokenSecret) {
-		this();
-		this.connect(consumerKey, consumerSecret, token, tokenSecret);
-	}
-
-	/**
-	 * Connects an existing Business Searcher to the real Yelp dataservice.
-	 * @param consumerKey
-	 * @param consumerSecret
-	 * @param token
-	 * @param tokenSecret
-	 */
-	public void connect(String consumerKey, String consumerSecret, String token, String tokenSecret) {
-		this.connected= true;
-		this.service = new ServiceBuilder().provider(BusinessAPI.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
+	public void connect(String consumerKey, String consumerSecret,
+			String token, String tokenSecret) {
+		this.local = false;
+		this.service = new ServiceBuilder().provider(BusinessAPI.class)
+				.apiKey(consumerKey).apiSecret(consumerSecret).build();
 		this.accessToken = new Token(token, tokenSecret);
 	}
 
 	/**
-	 * Turns on spoofing, so that when the service needs to retrieve data from the Yelp
-	 * service, it instead just grabs random data from the local store.
-	 * @param spoofing
+	 * Establishes that data should be retrieved locally. This does not require
+	 * an internet connection.
+	 * 
+	 * If data is being retrieved locally, you must be sure that your parameters
+	 * match locally stored data. Otherwise, you will get nothing in return.
+	 * 
+	 * @param local
 	 */
-	public void setSpoofing(boolean spoofing) {
-		this.spoof = spoofing;
+	public void setLocal() {
+		this.local = true;
 	}
 
 	/**
-	 * Returns a list of all the Business categories (which may have subcategories)
+	 * The function is used to create a request to the server. By converting a
+	 * request to a string, you can get an accurate and storeable version of it.
+	 * 
+	 * @param destination
+	 * @param hashMap
 	 * @return
 	 */
-	public List<BusinessCategory> getCategories() {return null;}
-	
-	public String makeRequest(String destination, HashMap<String, String> hashMap) {
-		 OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/" +destination);
-		 for (Entry<String, String> parameter: hashMap.entrySet()) {
-			 String key = parameter.getKey();
-			 String value = parameter.getValue();
-			 request.addQuerystringParameter(key, value);
-		 }
-		 this.service.signRequest(this.accessToken, request);
-		 System.out.println(request.getQueryStringParams());
-		 Response response = request.send();
-		 return response.getBody();
-	}
-	
-
-	public void getBusinessData(String businessId,
-								  JsonBusinessDataListener listener) {
-		String response = this.makeRequest("business/"+businessId, new HashMap<String, String>());
-		Exception error = this.checkErrors(response);
-		if (error == null) {
-			listener.onSuccess(response);
-		} else {
-			listener.onFailure(error);
+	OAuthRequest makeRequest(String destination, HashMap<String, String> hashMap) {
+		OAuthRequest request = new OAuthRequest(Verb.GET,
+				"http://api.yelp.com/v2/" + destination);
+		for (Entry<String, String> parameter : hashMap.entrySet()) {
+			String key = parameter.getKey();
+			String value = parameter.getValue();
+			request.addQuerystringParameter(key, value);
 		}
+		this.service.signRequest(this.accessToken, request);
+		return request;
 	}
-	
-	
 
-	private Exception checkErrors(String response) {
+	/**
+	 * This function is used to send a request to the server.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	String sendRequest(OAuthRequest request) throws OAuthException {
+		return request.send().getBody();
+	}
+
+	/**
+	 * A method that will convert a Yelp error to a Java exception, if there is
+	 * one.
+	 * 
+	 * @param response
+	 * @return
+	 */
+	BusinessSearchException checkErrors(String response) {
+		if (response.isEmpty()) {
+			return new BusinessSearchException(
+					"Local",
+					"Could not connect to the online Yelp service. Try using a local connection instead.",
+					"");
+		}
 		try {
-			HashMap<String, Object> r = JsonConverter.convertToHashMap(response);
+			HashMap<String, Object> r = JsonConverter
+					.convertToHashMap(response);
 			if (r.containsKey("error")) {
 				@SuppressWarnings("unchecked")
-				HashMap<String, Object> error = (HashMap<String, Object>) r.get("error");
-				return new YelpException((String)error.get("id"), 
-						(String)error.get("text"),
-						(String)error.get("field"));
+				HashMap<String, Object> error = (HashMap<String, Object>) r
+						.get("error");
+				return new BusinessSearchException((String) error.get("id"),
+						(String) error.get("text"), (String) error.get("field"));
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return e;
+			return new BusinessSearchException(
+					"Local",
+					"The response from the Yelp Service was not valid JSON. Check the fields for more information on what was returned.",
+					response);
 		}
 		return null;
 	}
 
-	public void searchBusinesses(BusinessQuery query,
-								   JsonBusinessSearchListener listener) {
-		// TODO Auto-generated method stub
-		System.out.println(query.getFilters());
-		String response = this.makeRequest("search", query.getFilters());
-		Exception error = this.checkErrors(response);
-		if (error == null) {
-			listener.onSuccess(response);
-		} else {
-			listener.onFailure(error);
-		}
+	/**
+	 * Returns data about a business given its businessId (which is a sequence
+	 * of characters, symbols, and numbers, e.g. "I_7cQmHxx6LokP9yr7Fx-w").
+	 * 
+	 * @param businessId
+	 *            A string identifying the business.
+	 * @param listener
+	 *            a callback function that will consume the data (or error)
+	 *            about the business.
+	 */
+	public void getBusinessData(final String businessId,
+			final JsonBusinessDataListener listener) {
+		final JsonBusinessSearch _this = this;
+		Thread thread = new Thread() {
+			public void run() {
+				OAuthRequest request = _this.makeRequest("business/"
+						+ businessId, new HashMap<String, String>());
+				String response = _this.sendRequest(request);
+				BusinessSearchException error = _this.checkErrors(response);
+				if (error == null) {
+					listener.onSuccess(response);
+				} else {
+					listener.onFailure(error);
+				}
+			}
+		};
+		thread.start();
 	}
-	
+
+	/**
+	 * Queries the Yelp service for businesses that match the given
+	 * BusinessQuery. Returns the data (or error) through the listener object.
+	 * 
+	 * @param query
+	 *            A BusinessQuery object
+	 * @param listener
+	 *            A listener object that should contain methods for handling the
+	 *            data and, optionally, any errors.
+	 */
+	public void searchBusinesses(final BusinessQuery query,
+			final JsonBusinessSearchListener listener) {
+		final JsonBusinessSearch _this = this;
+		Thread thread = new Thread() {
+			public void run() {
+				OAuthRequest request = _this.makeRequest("search",
+						query.getFilters());
+				String response = _this.sendRequest(request);
+				BusinessSearchException error = _this.checkErrors(response);
+				if (error == null) {
+					listener.onSuccess(response);
+				} else {
+					listener.onFailure(error);
+				}
+			}
+		};
+		thread.start();
+	}
+
 	public static void main(String[] args) {
-		JsonBusinessSearch jbs = new JsonBusinessSearch("em86viPSqwmfF2PFfNsPEQ",
-														"K7Dq24NKDMNNk-sz_-JMlAvDmSU",
-														"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
-														"ggqII8lp1foy0ttolsYrTIUAm7c");
-		
+		JsonBusinessSearch jbs = JsonBusinessSearch.getInstance();
+		jbs.connect("em86viPSqwmfF2PFfNsPEQ", "K7Dq24NKDMNNk-sz_-JMlAvDmSU",
+				"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
+				"ggqII8lp1foy0ttolsYrTIUAm7c");
 		try {
-			final PrintWriter os = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\acbart\\Projects\\WebInACan\\Yelper\\src\\updated.json", true)));
-			InputStreamReader is = new InputStreamReader(JsonBusinessSearch.class.getResourceAsStream("../business_ids_2.txt"));
+			InputStreamReader is = new InputStreamReader(
+					JsonBusinessSearch.class
+							.getResourceAsStream("../business_ids_2.txt"));
 			BufferedReader clientData = new BufferedReader(is);
 			String line;
 			while ((line = clientData.readLine()) != null) {
-				jbs.getBusinessData(line.trim(), new JsonBusinessDataListener() {
+				jbs.getBusinessData(line.trim(),
+						new JsonBusinessDataListener() {
 
-					@Override
-					public void onSuccess(String business) {
-						System.out.println(business);
-						os.println(business);
-					}
-					
-				});
+							@Override
+							public void onSuccess(String business) {
+								// System.out.println(business);
+							}
+
+						});
 			}
 			clientData.close();
-			os.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*
-		BusinessQuery bq = new BusinessQuery("blacksburg va");
-		jbs.searchBusinesses(bq, new JsonBusinessSearchListener() {
-
-			@Override
-			public void onSuccess(String searchResponse) {
-				System.out.println("AWESOME"+searchResponse);
-			}
-			
-		});*/
+		 * BusinessQuery bq = new BusinessQuery("blacksburg va");
+		 * jbs.searchBusinesses(bq, new JsonBusinessSearchListener() {
+		 * 
+		 * @Override public void onSuccess(String searchResponse) {
+		 * System.out.println("AWESOME"+searchResponse); }
+		 * 
+		 * });
+		 */
 	}
 
+	/**
+	 * <b>This is an internal method. Do not use it!</b><br>
+	 * <br>
+	 * 
+	 * Internal method to access this instance's local data.
+	 * 
+	 * @return
+	 */
 	public ClientStore getClientStore() {
 		return clientStore;
 	}
