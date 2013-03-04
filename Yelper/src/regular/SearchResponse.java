@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import main.BusinessCategory;
+import util.PropertyString;
+import util.Util;
+
 import main.RectangularLocation;
 
 
@@ -25,11 +27,12 @@ public class SearchResponse {
 	private RectangularLocation suggestedDisplayRegion;
 	private int totalFound;
 	
+	@SuppressWarnings("unchecked")
 	public SearchResponse(Map<String, Object> response) {
 		
 		this.totalFound = Integer.parseInt((response.get("total").toString()));
 		HashMap<String, Object> region = (HashMap<String, Object>) response.get("region");
-		this.suggestedDisplayRegion = (new RectangularLocation()).center(region);
+		this.suggestedDisplayRegion = RectangularLocation.fromCenter(region);
 		
 		this.businesses = new ArrayList<Business>();
 		Iterator<HashMap<String, Object>> i = ((ArrayList<HashMap<String, Object>>) response.get("businesses")).iterator();
@@ -38,30 +41,36 @@ public class SearchResponse {
 		}
 	}
 	
+	/**
+	 * TODO
+	 */
 	public String toString() {
 		ArrayList<String> businessStrings = new ArrayList<String>();
 		for (Business b : businesses) {
 			businessStrings.add(b.toString());
 		}
-		return (new ToStringHelper("SearchResponse"))
+		return (new PropertyString("SearchResponse"))
 				.add("totalFound", ""+totalFound)
 				.add("businesses", "["+Util.join(businessStrings)+"]")
 				.toString();
 	}
 
 	/**
+	 * TODO
 	 * @return the businesses
 	 */
 	public List<Business> getBusinesses() {
 		return businesses;
 	}
 	/**
+	 * TODO
 	 * @return the suggestedDisplayRegion
 	 */
 	public RectangularLocation getSuggestedDisplayRegion() {
 		return suggestedDisplayRegion;
 	}
 	/**
+	 * TODO
 	 * @return the totalFound
 	 */
 	public int getTotalFound() {

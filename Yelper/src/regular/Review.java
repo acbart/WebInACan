@@ -2,6 +2,11 @@ package regular;
 
 import java.util.HashMap;
 
+/**
+ * TODO
+ * @author acbart
+ *
+ */
 public class Review {
 	private String id;
 	private int rating;
@@ -11,22 +16,10 @@ public class Review {
 	private String excerpt;
 	private int timeCreated;
 	private User user;
-	
-	Review(String id, int rating, String ratingImageUrl,
-			String ratingImageUrlSmall, String ratingImageUrlLarge,
-			String excerpt, int timeCreated, User user) {
-		this.id = id;
-		this.rating = rating;
-		this.ratingImageUrl = ratingImageUrl;
-		this.ratingImageUrlSmall = ratingImageUrlSmall;
-		this.ratingImageUrlLarge = ratingImageUrlLarge;
-		this.excerpt = excerpt;
-		this.timeCreated = timeCreated;
-		this.user = user;
-	}
+
 	
 	@SuppressWarnings("unchecked")
-	public Review(HashMap<String, Object> raw) {
+	Review(HashMap<String, Object> raw) {
 		this.id = (String) raw.get("id");
 		this.rating = Integer.parseInt((raw.get("rating").toString()));
 		this.ratingImageUrl = (String) raw.get("rating_image_url");
@@ -38,48 +31,56 @@ public class Review {
 	}
 
 	/**
+	 * TODO
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
 	/**
+	 * TODO
 	 * @return the rating
 	 */
 	public int getRating() {
 		return rating;
 	}
 	/**
+	 * TODO
 	 * @return the ratingImageUrl
 	 */
 	public String getRatingImageUrl() {
 		return ratingImageUrl;
 	}
 	/**
+	 * TODO
 	 * @return the ratingImageUrlSmall
 	 */
 	public String getRatingImageUrlSmall() {
 		return ratingImageUrlSmall;
 	}
 	/**
+	 * TODO
 	 * @return the ratingImageUrlLarge
 	 */
 	public String getRatingImageUrlLarge() {
 		return ratingImageUrlLarge;
 	}
 	/**
+	 * TODO
 	 * @return the excerpt
 	 */
 	public String getExcerpt() {
 		return excerpt;
 	}
 	/**
+	 * TODO
 	 * @return the timeCreated
 	 */
 	public int getTimeCreated() {
 		return timeCreated;
 	}
 	/**
+	 * TODO
 	 * @return the user
 	 */
 	public User getUser() {

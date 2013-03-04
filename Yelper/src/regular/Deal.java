@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * TODO
+ * @author acbart
+ *
+ */
 public class Deal {
 	private String id;
 	private String title;
@@ -20,6 +24,7 @@ public class Deal {
 	
 	private List<DealOption> options;
 
+	@SuppressWarnings("unchecked")
 	public Deal(HashMap<String, Object> raw) {
 		this.id = (String) raw.get("id");
 		this.title = (String) raw.get("title");
@@ -43,6 +48,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO 
 	 * @return the additionalRestrictions
 	 */
 	public String getAdditionalRestrictions() {
@@ -50,6 +56,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the currencyCode
 	 */
 	public String getCurrencyCode() {
@@ -57,6 +64,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the details
 	 */
 	public String getDetails() {
@@ -64,6 +72,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the id
 	 */
 	public String getId() {
@@ -71,6 +80,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the imageUrl
 	 */
 	public String getImageUrl() {
@@ -78,6 +88,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the importantRestrictions
 	 */
 	public String getImportantRestrictions() {
@@ -85,6 +96,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the options
 	 */
 	public List<DealOption> getOptions() {
@@ -92,6 +104,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the timeEnd
 	 */
 	public int getTimeEnd() {
@@ -99,6 +112,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the timeStart
 	 */
 	public int getTimeStart() {
@@ -106,6 +120,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the title
 	 */
 	public String getTitle() {
@@ -113,6 +128,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the url
 	 */
 	public String getUrl() {
@@ -120,6 +136,7 @@ public class Deal {
 	}
 
 	/**
+	 * TODO
 	 * @return the isPopular
 	 */
 	public boolean isPopular() {

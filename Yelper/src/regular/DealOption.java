@@ -2,6 +2,11 @@ package regular;
 
 import java.util.HashMap;
 
+/**
+ * TODO
+ * @author acbart
+ *
+ */
 public class DealOption {
 	private String title;
 	private String purchaseUrl;
@@ -22,48 +27,56 @@ public class DealOption {
 		this.remainingCount = Integer.parseInt((raw.get("remaining_count").toString()));
 	}
 	/**
+	 * TODO
 	 * @return the originalPrice
 	 */
 	public int getOriginalPrice() {
 		return originalPrice;
 	}
 	/**
+	 * TODO
 	 * @return the originalPriceFormatted
 	 */
 	public String getOriginalPriceFormatted() {
 		return originalPriceFormatted;
 	}
 	/**
+	 * TODO
 	 * @return the price
 	 */
 	public int getPrice() {
 		return price;
 	}
 	/**
+	 * TODO
 	 * @return the priceFormatted
 	 */
 	public String getPriceFormatted() {
 		return priceFormatted;
 	}
 	/**
+	 * TODO
 	 * @return the purchaseUrl
 	 */
 	public String getPurchaseUrl() {
 		return purchaseUrl;
 	}
 	/**
+	 * TODO
 	 * @return the remainingCount
 	 */
 	public int getRemainingCount() {
 		return remainingCount;
 	}
 	/**
+	 * TODO
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
 	/**
+	 * TODO
 	 * @return the isQuantityLimited
 	 */
 	public boolean isQuantityLimited() {

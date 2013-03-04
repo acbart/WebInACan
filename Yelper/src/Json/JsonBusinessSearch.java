@@ -1,17 +1,15 @@
 package json;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import regular.JsonConverter;
+import util.JsonConverter;
 
 import main.AbstractBusinessSearch;
 import main.BusinessAPI;
 import main.BusinessQuery;
-import main.ClientStore;
 
 import org.json.simple.parser.ParseException;
 import org.scribe.builder.ServiceBuilder;
@@ -62,6 +60,19 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 
 	private static JsonBusinessSearch instance;
 
+	private boolean storing = false;
+
+	/**
+	 * This method is for internal use only.
+	 * 
+	 * When the system is storing, any requests made to the online Yelp service
+	 * will be stored for future use. However, those requests will not be saved
+	 * between runs of your program.
+	 */
+	public void setStoring(boolean storing) {
+		this.storing = storing;
+	}
+
 	/**
 	 * Retrieves the singleton instance of the JsonBusinessSearch.
 	 * 
@@ -71,7 +82,26 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 		if (instance == null) {
 			synchronized (JsonBusinessSearch.class) {
 				if (instance == null) {
-					instance = new JsonBusinessSearch();
+					instance = new JsonBusinessSearch(false);
+				}
+			}
+		}
+		return instance;
+	}
+
+	/**
+	 * This method is for internal use only. 
+	 * 
+	 * Retrieves the singleton instance of the JsonBusinessSearch, optionally
+	 * turning recording on or off.
+	 * 
+	 * @return
+	 */
+	public static JsonBusinessSearch getRecordingInstance() {
+		if (instance == null) {
+			synchronized (JsonBusinessSearch.class) {
+				if (instance == null) {
+					instance = new JsonBusinessSearch(true);
 				}
 			}
 		}
@@ -81,11 +111,12 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	/**
 	 * A protected constructor to defeat instantation of this singleton.
 	 */
-	protected JsonBusinessSearch() {
+	protected JsonBusinessSearch(boolean recording) {
 		setLocal();
+		setStoring(recording);
 		this.service = null;
 		this.accessToken = null;
-		this.clientStore = new ClientStore();
+		this.clientStore = new ClientStore(recording);
 	}
 
 	/**
@@ -148,7 +179,34 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	 * @return
 	 */
 	String sendRequest(OAuthRequest request) throws OAuthException {
-		return request.send().getBody();
+		String hashedRequest = hashRequest(request);
+		if (local) {
+			return clientStore.getData(hashedRequest);
+		} else {
+			String response = request.send().getBody();
+			if (storing) {
+				clientStore.putData(hashedRequest, response);
+			}
+			return response;
+		}
+	}
+
+	/**
+	 * Convert a Request object to an injective hash.
+	 * 
+	 * An injective hash has no collisions. Hopefully that can't occur with
+	 * this.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static String hashRequest(OAuthRequest request) {
+		String url = request.getUrl();
+		String queryStrings = (new TreeMap(request.getQueryStringParams()))
+				.toString();
+		String bodyParams = (new TreeMap(request.getBodyParams())).toString();
+		return url + "%" + queryStrings + "%" + bodyParams;
 	}
 
 	/**
@@ -166,8 +224,8 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 					"");
 		}
 		try {
-			HashMap<String, Object> r = JsonConverter
-					.convertToHashMap(response);
+			HashMap<String, Object> r = (HashMap<String, Object>) JsonConverter
+					.convertToMap(response);
 			if (r.containsKey("error")) {
 				@SuppressWarnings("unchecked")
 				HashMap<String, Object> error = (HashMap<String, Object>) r
@@ -242,43 +300,6 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 		thread.start();
 	}
 
-	public static void main(String[] args) {
-		JsonBusinessSearch jbs = JsonBusinessSearch.getInstance();
-		jbs.connect("em86viPSqwmfF2PFfNsPEQ", "K7Dq24NKDMNNk-sz_-JMlAvDmSU",
-				"hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ",
-				"ggqII8lp1foy0ttolsYrTIUAm7c");
-		try {
-			InputStreamReader is = new InputStreamReader(
-					JsonBusinessSearch.class
-							.getResourceAsStream("../business_ids_2.txt"));
-			BufferedReader clientData = new BufferedReader(is);
-			String line;
-			while ((line = clientData.readLine()) != null) {
-				jbs.getBusinessData(line.trim(),
-						new JsonBusinessDataListener() {
-
-							@Override
-							public void onSuccess(String business) {
-								// System.out.println(business);
-							}
-
-						});
-			}
-			clientData.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		/*
-		 * BusinessQuery bq = new BusinessQuery("blacksburg va");
-		 * jbs.searchBusinesses(bq, new JsonBusinessSearchListener() {
-		 * 
-		 * @Override public void onSuccess(String searchResponse) {
-		 * System.out.println("AWESOME"+searchResponse); }
-		 * 
-		 * });
-		 */
-	}
-
 	/**
 	 * <b>This is an internal method. Do not use it!</b><br>
 	 * <br>
@@ -289,6 +310,18 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	 */
 	public ClientStore getClientStore() {
 		return clientStore;
+	}
+
+	/**
+	 * <b>This is an internal method. Do not use it.</b><br>
+	 * 
+	 * Internal method to save the current data store to a file.
+	 * @param file
+	 * @param b
+	 * @throws IOException 
+	 */
+	public void save(String source, boolean append) throws IOException {
+		this.clientStore.save(source, append);
 	}
 
 }

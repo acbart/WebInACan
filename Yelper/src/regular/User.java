@@ -2,6 +2,11 @@ package regular;
 
 import java.util.HashMap;
 
+/**
+ * TODO
+ * @author acbart
+ *
+ */
 public class User {
 	private String id;
 	private String imageUrl;
@@ -13,24 +18,27 @@ public class User {
 		this.name = name;
 	}
 	
-	public User(HashMap<String, Object> raw) {
+	User(HashMap<String, Object> raw) {
 		this.id = (String) raw.get("id");
 		this.imageUrl = (String) raw.get("image_url");
 		this.name = (String) raw.get("name");
 	}
 	/**
+	 * TODO
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
 	/**
+	 * TODO
 	 * @return the imageUrl
 	 */
 	public String getImageUrl() {
 		return imageUrl;
 	}
 	/**
+	 * TODO
 	 * @return the name
 	 */
 	public String getName() {

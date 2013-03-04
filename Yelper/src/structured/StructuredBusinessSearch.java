@@ -5,7 +5,6 @@ import java.util.Map;
 
 import main.AbstractBusinessSearch;
 import main.BusinessQuery;
-import main.ClientStore;
 
 import org.json.simple.parser.ParseException;
 
@@ -16,7 +15,7 @@ import json.JsonBusinessDataListener;
 import json.JsonBusinessSearch;
 import json.JsonBusinessSearchListener;
 
-import regular.JsonConverter;
+import util.JsonConverter;
 
 /**
  * The StructuredBusinessSearch class is used to connect to the Yelp service and
@@ -95,8 +94,8 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					public void onSuccess(String business) {
 						HashMap<String, Object> structuredBusiness = null;
 						try {
-							structuredBusiness = JsonConverter
-									.convertToHashMap(business);
+							structuredBusiness = (HashMap<String, Object>) JsonConverter
+									.convertToMap(business);
 						} catch (ParseException e) {
 							listener.onFailure(new DataUnreadableException(
 									"INVALID_DATA",
@@ -132,8 +131,8 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					public void onSuccess(String response) {
 						HashMap<String, Object> structuredResponse = null;
 						try {
-							structuredResponse = JsonConverter
-									.convertToHashMap(response);
+							structuredResponse = (HashMap<String, Object>) JsonConverter
+									.convertToMap(response);
 						} catch (ParseException e) {
 							listener.onFailure(new DataUnreadableException(
 									"INVALID_DATA",
@@ -195,18 +194,6 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					}
 
 				});
-	}
-
-	/**
-	 * <b>This is an internal method. Do not use it!</b><br>
-	 * <br>
-	 * 
-	 * Internal method to access this instance's local data.
-	 * 
-	 * @return
-	 */
-	public ClientStore getClientStore() {
-		return this.jsonBusinessSearch.getClientStore();
 	}
 
 }

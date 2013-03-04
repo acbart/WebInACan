@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * TODO
+ * @author acbart
+ *
+ */
 public class GiftCertificate {
 	private String id;
 	private String url;
@@ -14,6 +19,7 @@ public class GiftCertificate {
 	private List<GiftCertificateOption> options;
 	
 	
+	@SuppressWarnings("unchecked")
 	public GiftCertificate(HashMap<String, Object> raw) {
 		this.id= (String) raw.get("id");
 		this.url = (String) raw.get("url");
@@ -30,36 +36,42 @@ public class GiftCertificate {
 		}
 	}
 	/**
+	 * TODO
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
 	/**
+	 * TODO
 	 * @return the url
 	 */
 	public String getUrl() {
 		return url;
 	}
 	/**
+	 * TODO
 	 * @return the imageUrl
 	 */
 	public String getImageUrl() {
 		return imageUrl;
 	}
 	/**
+	 * TODO
 	 * @return the currencyCode
 	 */
 	public String getCurrencyCode() {
 		return currencyCode;
 	}
 	/**
+	 * TODO
 	 * @return the unusedBalances
 	 */
 	public String getUnusedBalances() {
 		return unusedBalances;
 	}
 	/**
+	 * TODO
 	 * @return the options
 	 */
 	public List<GiftCertificateOption> getOptions() {
