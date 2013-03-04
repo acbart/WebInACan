@@ -31,13 +31,17 @@ public class DetailedLocation implements Location {
 	private ArrayList<String> neighborhoods;
 	private GeoAccuracy geoAccuracy;
 
-
-	/** TODO
+	/**
+	 * Create a new DetailedLocation.
 	 * 
 	 * @param latitude
 	 * @param longitude
 	 * @param address
+	 *            A list of fields describing the address, e.g.
+	 *            ["1313 MockingBird Lane", "Blacksburg", "VA"]
 	 * @param displayAddress
+	 *            A list of detailed strings representing the postal address,
+	 *            with more human-friendly information about the address.
 	 * @param city
 	 * @param stateCode
 	 * @param postalCode
@@ -65,11 +69,6 @@ public class DetailedLocation implements Location {
 		this.geoAccuracy = geoAccuracy;
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param hashMap
-	 */
 	@SuppressWarnings("unchecked")
 	DetailedLocation(HashMap<String, Object> hashMap) {
 		HashMap<String, Object> coordinates = (HashMap<String, Object>) hashMap
@@ -95,14 +94,15 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns a string representation of this Location based on it's address
+	 * field.
 	 */
 	public String toString() {
 		return Arrays.deepToString(this.address.toArray()).toString();
 	}
 
 	/**
-	 * TODO
+	 * Returns the latitude of the location of this business.
 	 * 
 	 * @return the latitude
 	 */
@@ -111,7 +111,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the longitude of the geocoordinate of this location.
 	 * 
 	 * @return the longitude
 	 */
@@ -120,7 +120,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the address of this location as a list of strings.
 	 * 
 	 * @return the address
 	 */
@@ -129,7 +129,8 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns a more human-readable address of this location as a list of
+	 * strings.
 	 * 
 	 * @return the displayAddress
 	 */
@@ -138,7 +139,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the city that this location is in.
 	 * 
 	 * @return the city
 	 */
@@ -147,7 +148,8 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the <a href='http://en.wikipedia.org/wiki/ISO_3166-2'>two-letter
+	 * State code</a> that this location is in (e.g. Virginia is "VA").
 	 * 
 	 * @return the stateCode
 	 */
@@ -156,7 +158,9 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the postal (or zip) code of this location (e.g. Blacksburg is
+	 * 24060). Remember that sometimes zip codes are represented as 9-characters
+	 * instead of 5.
 	 * 
 	 * @return the postalCode
 	 */
@@ -165,7 +169,9 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the <a
+	 * href='http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>two-letter country
+	 * code</a> for this location.
 	 * 
 	 * @return the countryCode
 	 */
@@ -174,7 +180,9 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the Cross streets for the business that this location describes.
+	 * A cross street is the street closest to a location that intersects the
+	 * locations's street.
 	 * 
 	 * @return the crossStreets
 	 */
@@ -183,7 +191,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * List that provides neighborhood(s) information for this location.
 	 * 
 	 * @return the neighborhoods
 	 */
@@ -192,7 +200,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * Returns the {@link main.GeoAccuracy GeoAccuracy} of this location.
 	 * 
 	 * @return the geoAccuracy
 	 */
@@ -201,7 +209,7 @@ public class DetailedLocation implements Location {
 	}
 
 	/**
-	 * TODO
+	 * This method is for internal purposes only.
 	 */
 	@Override
 	public Map<String, String> getFilter() {

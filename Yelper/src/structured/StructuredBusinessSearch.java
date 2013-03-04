@@ -1,5 +1,6 @@
 package structured;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,6 +94,10 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					@Override
 					public void onSuccess(String business) {
 						HashMap<String, Object> structuredBusiness = null;
+						if (business == "") {
+							listener.onSuccess(StructuredBusinessSearch.getEmptyBusiness());
+							return;
+						}
 						try {
 							structuredBusiness = (HashMap<String, Object>) JsonConverter
 									.convertToMap(business);
@@ -110,6 +115,50 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					}
 
 				});
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected static Map<String, Object> getEmptyBusiness() {
+		HashMap<String, Object> empty = new HashMap<String, Object>();
+		empty.put("categories", new ArrayList());
+		empty.put("deals", new ArrayList());
+		empty.put("gift_certificates", new ArrayList());
+		empty.put("reviews", new ArrayList());
+		empty.put("id", "");
+		empty.put("display_phone", "");
+		empty.put("image_url", "");
+		empty.put("is_claimed", false);
+		empty.put("is_closed", false);
+		empty.put("mobile_url", "");
+		empty.put("name", "");
+		empty.put("phone", "");
+		empty.put("rating", 1.0);
+		empty.put("rating_img_url", "");
+		empty.put("rating_img_url_large", "");
+		empty.put("rating_img_url_small", "");
+		empty.put("review_count", 0);
+		empty.put("snippet_image_url", "");
+		empty.put("snippet_text", "");
+		empty.put("url", "");
+		
+		HashMap<String, Object> location = new HashMap<String, Object>();
+		location.put("address", new ArrayList());
+		location.put("display_address", new ArrayList());
+		location.put("neighborhoods", new ArrayList());
+		location.put("city", "");
+		location.put("country_code", "");
+		location.put("cross_streets", "");
+		location.put("geo_accuracy", 4);
+		location.put("postal_code", "");
+		location.put("state_code", "");
+		HashMap<String, Object> coordinate= new HashMap<String, Object>();
+		coordinate.put("latitude", 0.0);
+		coordinate.put("longitude", 0.0);
+		location.put("coordinate", coordinate);
+		
+		empty.put("location", location);
+		
+		return empty;
 	}
 
 	/**
@@ -130,6 +179,10 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					@Override
 					public void onSuccess(String response) {
 						HashMap<String, Object> structuredResponse = null;
+						if (response == "") {
+							listener.onSuccess(StructuredBusinessSearch.getEmptySearchReponse());
+							return;
+						}
 						try {
 							structuredResponse = (HashMap<String, Object>) JsonConverter
 									.convertToMap(response);
@@ -147,6 +200,23 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 					}
 
 				});
+	}
+
+	protected static Map<String, Object> getEmptySearchReponse() {
+		HashMap<String, Object> empty = new HashMap<String, Object>();
+		empty.put("businesses", new ArrayList<String>());
+		HashMap<String, Object> region = new HashMap<String, Object>();
+		HashMap<String, Object> center= new HashMap<String, Object>();
+		center.put("latitude", 0.0);
+		center.put("longitude", 0.0);
+		HashMap<String, Object> span= new HashMap<String, Object>();
+		span.put("latitude_delta", 0.0);
+		span.put("longitude_delta", 0.0);
+		region.put("center", center);
+		region.put("span", span);
+		empty.put("region", region);
+		empty.put("total", 0);
+		return empty;
 	}
 
 	/**
@@ -178,22 +248,6 @@ public class StructuredBusinessSearch implements AbstractBusinessSearch {
 	 */
 	public void setLocal() {
 		this.jsonBusinessSearch.setLocal();
-	}
-
-	public static void main(String[] args) {
-		StructuredBusinessSearch sbs = StructuredBusinessSearch.getInstance();
-		sbs.connect("em86viPSqwmfF2PFfNsPEQ", "K7Dq24NKDMNNk-sz_-JMlAvDmSU",
-				"--M397dy_1UeEcRccHfjeX-X8UeJhOOS",
-				"sUwtVWXX53MwNlvtyM33GTIcj5A");
-		sbs.getBusinessData("Te72-fjbquQFCfPBgJ4ldQ",
-				new StructuredBusinessDataListener() {
-
-					@Override
-					public void onSuccess(Map<String, Object> business) {
-						System.out.println(business);
-					}
-
-				});
 	}
 
 }

@@ -3,7 +3,7 @@ package regular;
 import java.util.HashMap;
 
 /**
- * TODO
+ * A Review contains user-supplied information about a Business.
  * @author acbart
  *
  */
@@ -31,56 +31,56 @@ public class Review {
 	}
 
 	/**
-	 * TODO
+	 * Returns a unique identifier for the Review.
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
 	/**
-	 * TODO
+	 * Returns a value from 1-5 rating the Business.
 	 * @return the rating
 	 */
 	public int getRating() {
 		return rating;
 	}
 	/**
-	 * TODO
+	 * Returns a URL that links to an image of stars for this business (size = 84x17).
 	 * @return the ratingImageUrl
 	 */
 	public String getRatingImageUrl() {
 		return ratingImageUrl;
 	}
 	/**
-	 * TODO
+	 * Returns a URL that links to a smaller image of stars for this business (size = 50x10).
 	 * @return the ratingImageUrlSmall
 	 */
 	public String getRatingImageUrlSmall() {
 		return ratingImageUrlSmall;
 	}
 	/**
-	 * TODO
+	 * Returns a URL that links to a larger image of stars for this business (size = 166x30).
 	 * @return the ratingImageUrlLarge
 	 */
 	public String getRatingImageUrlLarge() {
 		return ratingImageUrlLarge;
 	}
 	/**
-	 * TODO
+	 * Returns an excerpt of the text of this review. 
 	 * @return the excerpt
 	 */
 	public String getExcerpt() {
 		return excerpt;
 	}
 	/**
-	 * TODO
+	 * Returns a Unix Timestamp indicating the date/time that this Review was created.
 	 * @return the timeCreated
 	 */
 	public int getTimeCreated() {
 		return timeCreated;
 	}
 	/**
-	 * TODO
+	 * Returns the User who wrote this review.
 	 * @return the user
 	 */
 	public User getUser() {

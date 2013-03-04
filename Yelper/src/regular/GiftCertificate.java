@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * TODO
+ * A GiftCertificate is something you can buy to give as a present to someone
+ * else, and will have the value of however much you bought.
+ * 
  * @author acbart
- *
+ * 
  */
 public class GiftCertificate {
 	private String id;
@@ -17,61 +19,76 @@ public class GiftCertificate {
 	private String currencyCode;
 	private String unusedBalances;
 	private List<GiftCertificateOption> options;
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public GiftCertificate(HashMap<String, Object> raw) {
-		this.id= (String) raw.get("id");
+	GiftCertificate(HashMap<String, Object> raw) {
+		this.id = (String) raw.get("id");
 		this.url = (String) raw.get("url");
-		this.imageUrl= (String) raw.get("image_url");
+		this.imageUrl = (String) raw.get("image_url");
 		this.currencyCode = (String) raw.get("currency_code");
 		this.unusedBalances = (String) raw.get("unused_balance");
-		
+
+		this.options = new ArrayList<GiftCertificateOption>();
 		if (raw.containsKey("options")) {
-			this.options= new ArrayList<GiftCertificateOption>();
-			Iterator<HashMap<String, Object>> o = ((ArrayList<HashMap<String, Object>>) raw.get("options")).iterator();
+			Iterator<HashMap<String, Object>> o = ((ArrayList<HashMap<String, Object>>) raw
+					.get("options")).iterator();
 			while (o.hasNext()) {
 				this.options.add(new GiftCertificateOption(o.next()));
 			}
 		}
 	}
+
 	/**
-	 * TODO
+	 * Returns a unique identifier for this GiftCertificate.
+	 * 
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
+
 	/**
-	 * TODO
+	 * Returns the Gift certificate landing page url.
+	 * 
 	 * @return the url
 	 */
 	public String getUrl() {
 		return url;
 	}
+
 	/**
-	 * TODO
+	 * Returns the Gift certificate image url.
+	 * 
 	 * @return the imageUrl
 	 */
 	public String getImageUrl() {
 		return imageUrl;
 	}
+
 	/**
-	 * TODO
+	 * Returns the <a href='http://en.wikipedia.org/wiki/ISO_4217'>ISO-4217
+	 * Currency Code</a>
+	 * 
 	 * @return the currencyCode
 	 */
 	public String getCurrencyCode() {
 		return currencyCode;
 	}
+
 	/**
-	 * TODO
+	 * Returns how unused balances are returned - either as cash ("CASH") or
+	 * store credit ("CREDIT").
+	 * 
 	 * @return the unusedBalances
 	 */
 	public String getUnusedBalances() {
 		return unusedBalances;
 	}
+
 	/**
-	 * TODO
+	 * Returns a list of Gift Certificate options that are available, or how
+	 * much you can purchase a gift certificate for (e.g. $10, $20, $50, ...).
+	 * 
 	 * @return the options
 	 */
 	public List<GiftCertificateOption> getOptions() {

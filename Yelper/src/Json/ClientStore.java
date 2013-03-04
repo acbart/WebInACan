@@ -30,7 +30,7 @@ class ClientStore {
 	 */
 	public ClientStore(String source, boolean recording) {
 		jsonData = new HashMap<String, String>();
-		if (recording) {
+		if (!recording) {
 			try {
 				this.load(source);
 			} catch (IOException e) {
@@ -61,7 +61,7 @@ class ClientStore {
 	 * Create a client store based on the default store.
 	 */
 	public ClientStore(boolean recording) {
-		this("../updated.json", recording);
+		this("../cache.json", recording);
 	}
 
 	/**

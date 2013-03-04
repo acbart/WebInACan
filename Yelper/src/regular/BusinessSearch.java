@@ -108,7 +108,7 @@ public class BusinessSearch implements AbstractBusinessSearch {
 	 *            A listener object that should contain methods for handling the
 	 *            data and, optionally, any errors.
 	 */
-	public void searchBusinesses(BusinessQuery query,
+	public void searchBusinesses(final BusinessQuery query,
 			final BusinessSearchListener listener) {
 		this.structuredBusinessSearch.searchBusinesses(query,
 				new StructuredBusinessSearchListener() {
@@ -160,13 +160,21 @@ public class BusinessSearch implements AbstractBusinessSearch {
 	public static void main(String[] args) {
 		final BusinessSearch bs = BusinessSearch.getInstance();
 		bs.setLocal();
-		bs.getBusinessData("bad input", new BusinessDataListener() {
+		/*bs.searchBusinesses(new BusinessQuery("Blacksburg, VfA"), new BusinessSearchListener() {
+
+			@Override
+			public void onSuccess(SearchResponse searchResponse) {
+				System.out.println(searchResponse);
+			}
+
+		});*/
+		bs.getBusinessData("gillies-cuisine-blacksburgf", new BusinessDataListener() {
 
 			@Override
 			public void onSuccess(Business business) {
 				System.out.println(business);
 			}
-
+			
 		});
 	}
 

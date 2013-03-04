@@ -9,6 +9,7 @@ import util.JsonConverter;
 
 import main.AbstractBusinessSearch;
 import main.BusinessAPI;
+import main.BusinessCategory;
 import main.BusinessQuery;
 
 import org.json.simple.parser.ParseException;
@@ -90,14 +91,14 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	}
 
 	/**
-	 * This method is for internal use only. 
+	 * This method is for internal use only.
 	 * 
 	 * Retrieves the singleton instance of the JsonBusinessSearch, optionally
 	 * turning recording on or off.
 	 * 
 	 * @return
 	 */
-	public static JsonBusinessSearch getRecordingInstance() {
+	static JsonBusinessSearch getRecordingInstance() {
 		if (instance == null) {
 			synchronized (JsonBusinessSearch.class) {
 				if (instance == null) {
@@ -117,6 +118,7 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 		this.service = null;
 		this.accessToken = null;
 		this.clientStore = new ClientStore(recording);
+		BusinessCategory.getCategories();
 	}
 
 	/**
@@ -168,7 +170,9 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 			String value = parameter.getValue();
 			request.addQuerystringParameter(key, value);
 		}
-		this.service.signRequest(this.accessToken, request);
+		if (!this.local) {
+			this.service.signRequest(this.accessToken, request);
+		}
 		return request;
 	}
 
@@ -218,10 +222,14 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	 */
 	BusinessSearchException checkErrors(String response) {
 		if (response.isEmpty()) {
-			return new BusinessSearchException(
-					"Local",
-					"Could not connect to the online Yelp service. Try using a local connection instead.",
-					"");
+			if (local) {
+				return null;
+			} else {
+				return new BusinessSearchException(
+						"Local",
+						"Could not connect to the online Yelp service. Try using a local connection instead.",
+						"");
+			}
 		}
 		try {
 			HashMap<String, Object> r = (HashMap<String, Object>) JsonConverter
@@ -316,12 +324,33 @@ public class JsonBusinessSearch implements AbstractBusinessSearch {
 	 * <b>This is an internal method. Do not use it.</b><br>
 	 * 
 	 * Internal method to save the current data store to a file.
+	 * 
 	 * @param file
 	 * @param b
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void save(String source, boolean append) throws IOException {
 		this.clientStore.save(source, append);
 	}
+
+	/*
+	 * public static void main(String[] args) { final JsonBusinessSearch jbs =
+	 * JsonBusinessSearch.getRecordingInstance();
+	 * jbs.connect("em86viPSqwmfF2PFfNsPEQ", "K7Dq24NKDMNNk-sz_-JMlAvDmSU",
+	 * "hbML2QjyBfh-fvw5PsiF71pVLt2m3AbZ", "ggqII8lp1foy0ttolsYrTIUAm7c");
+	 * jbs.searchBusinesses(new BusinessQuery("Blacksburg, VA"), new
+	 * JsonBusinessSearchListener() {
+	 * 
+	 * @Override public void onSuccess(String searchResponse) {
+	 * jbs.getBusinessData("gillies-cuisine-blacksburg", new
+	 * JsonBusinessDataListener() {
+	 * 
+	 * @Override public void onSuccess(String businessData) { try {
+	 * jbs.save("cache.json", false); System.out.println("Saved"); } catch
+	 * (IOException e) { // TODO Auto-generated catch block e.printStackTrace();
+	 * } }
+	 * 
+	 * }); } }); }
+	 */
 
 }

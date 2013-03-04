@@ -3,9 +3,10 @@ package regular;
 import java.util.HashMap;
 
 /**
- * TODO
+ * A DealOption is an item in a Deal.
+ * 
  * @author acbart
- *
+ * 
  */
 public class DealOption {
 	private String title;
@@ -16,67 +17,93 @@ public class DealOption {
 	private String originalPriceFormatted;
 	private boolean isQuantityLimited;
 	private int remainingCount;
-	public DealOption(HashMap<String, Object> raw) {
+
+	DealOption(HashMap<String, Object> raw) {
 		this.title = (String) raw.get("title");
 		this.purchaseUrl = (String) raw.get("purchase_url");
 		this.price = Integer.parseInt((raw.get("price").toString()));
 		this.priceFormatted = (String) raw.get("formatted_price");
-		this.originalPrice = Integer.parseInt((raw.get("original_price").toString()));
-		this.originalPriceFormatted = (String) raw.get("formatted_original_price");
+		this.originalPrice = Integer.parseInt((raw.get("original_price")
+				.toString()));
+		this.originalPriceFormatted = (String) raw
+				.get("formatted_original_price");
 		this.isQuantityLimited = (boolean) raw.get("is_quantity_limited");
-		this.remainingCount = Integer.parseInt((raw.get("remaining_count").toString()));
+		this.remainingCount = -1;
+		if (raw.containsKey("remaining_count")) {
+			this.remainingCount = Integer.parseInt((raw.get("remaining_count")
+					.toString()));
+		}
 	}
+
 	/**
-	 * TODO
+	 * Returns the original price of this option, before the deal is applied, in
+	 * cents.
+	 * 
 	 * @return the originalPrice
 	 */
 	public int getOriginalPrice() {
 		return originalPrice;
 	}
+
 	/**
-	 * TODO
+	 * Returns the original price of this option, before the deal is applied, as
+	 * a nicely formatted string.
+	 * 
 	 * @return the originalPriceFormatted
 	 */
 	public String getOriginalPriceFormatted() {
 		return originalPriceFormatted;
 	}
+
 	/**
-	 * TODO
+	 * Returns the price offered by this deal, in cents.
+	 * 
 	 * @return the price
 	 */
 	public int getPrice() {
 		return price;
 	}
+
 	/**
-	 * TODO
+	 * Returns the price offered by this deal as a nicely formatted string.
+	 * 
 	 * @return the priceFormatted
 	 */
 	public String getPriceFormatted() {
 		return priceFormatted;
 	}
+
 	/**
-	 * TODO
+	 * Returns the URL for this purchase option.
+	 * 
 	 * @return the purchaseUrl
 	 */
 	public String getPurchaseUrl() {
 		return purchaseUrl;
 	}
+
 	/**
-	 * TODO
+	 * Returns the remaining deal options available for purchase, if this deal
+	 * is limited. If it is not limited, -1 is returned.
+	 * 
 	 * @return the remainingCount
 	 */
 	public int getRemainingCount() {
 		return remainingCount;
 	}
+
 	/**
-	 * TODO
+	 * Returns the title of this option.
+	 * 
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
+
 	/**
-	 * TODO
+	 * Returns whether the quantity of this deal is limited. 
+	 * 
 	 * @return the isQuantityLimited
 	 */
 	public boolean isQuantityLimited() {
